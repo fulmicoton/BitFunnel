@@ -1,8 +1,8 @@
 #pragma once
 
-#include "BitFunnel/IInterface.h"
-#include "BitFunnel/Index/IFactSet.h"
-#include "BitFunnel/Index/DocumentHandle.h"
+#include "BitFunnel/IInterface.h"               // IIngestionIndex inherits from IIndex.
+#include "BitFunnel/Index/IFactSet.h"           // FactHandle parameter.
+#include "BitFunnel/Index/DocumentHandle.h"     // DocHandle return value.
 
 
 namespace BitFunnel
@@ -15,7 +15,7 @@ namespace BitFunnel
     // to group documents based on time stamp. Each group is assigned a GroupId
     // which is a unique identifier for the group that the client can use to
     // manage the index.
-    typedef unsigned __int64 GroupId;
+    typedef size_t GroupId;
 
 
     //*************************************************************************
@@ -56,6 +56,8 @@ namespace BitFunnel
         // Sets or clears a fact about a document with the given DocId. The 
         // FactHandle must have been previously registered in the IFactSet, 
         // otherwise the function throws.
+        // TODO: Update this comment to explain which IFactSet is referred
+        // to above.
         virtual void AssertFact(DocId id, FactHandle fact, bool value) = 0;
 
         // Returns true if and only if the specified DocId corresponds to a 
@@ -63,21 +65,6 @@ namespace BitFunnel
         // false for DocIds that have never been added, DocIds that are 
         // partially ingested, and DocIds that have been deleted.
         virtual bool Contains(DocId id) const = 0;
-
-        // Attempts to allocate a DocumentHandle suitable for ingesting a 
-        // document with the specified DocId value and the DDR candidate count.
-        // Implementations that don't support Place() will throw.
-        //
-        // DESIGN NOTE: This method is not intended to be called directly from 
-        // the host. Rather, it is called by the implementation of 
-        // IDocument::Place(). The reason that IDocument::Place() does not take 
-        // a postingCount is to decouple the IDocument interface from the 
-        // criteria used to actually place documents in shards. If the criteria 
-        // should change in the future, say requiring a second parameter, the 
-        // signature of IDocument::Place() will remain unchanged while its 
-        // implementation will call IIngester::AllocateDocument() which now 
-        // takes one more parameter.
-        virtual DocumentHandle AllocateDocument(unsigned postingCount) = 0;
 
         // Returns the size in bytes of the capacity of row tables in the 
         // entire ingestion index.

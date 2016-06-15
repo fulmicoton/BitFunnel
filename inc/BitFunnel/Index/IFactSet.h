@@ -21,7 +21,11 @@ namespace BitFunnel
     // plan.
     //
     //*************************************************************************
-    typedef unsigned __int64 FactHandle;
+    // TODO: REVIEW:
+    //   Should FactHandle be a member of IFactSet?
+    //   Should IIngestionIndex provide a DefineFact() method?
+    //   Should IFactSet be publicly visible?
+    typedef size_t FactHandle;
 
     class IFactSet
     {
