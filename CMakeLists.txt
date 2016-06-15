@@ -82,24 +82,48 @@ endmacro()
 
 ###############################################################################
 
-set(PUBLIC_HFILES
+set(BITFUNNEL_HFILES
   ${CMAKE_SOURCE_DIR}/inc/BitFunnel/IInterface.h
   ${CMAKE_SOURCE_DIR}/inc/BitFunnel/NonCopyable.h
+)
+
+set(INDEX_HFILES
+  ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Index/DocumentHandle.h
+  ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Index/IDocument.h
+  ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Index/IDocumentDataSchema.h
+  ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Index/IFactSet.h
+  ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Index/IIngestionIndex.h
+)
+
+set(UTILITIES_HFILES
   ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Utilities/ITaskDistributor.h
   ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Utilities/ITaskProcessor.h
   ${CMAKE_SOURCE_DIR}/inc/BitFunnel/Utilities/IThreadManager.h
+)
+
+set(LOGGER_HFILES
   ${CMAKE_SOURCE_DIR}/inc/LoggerInterfaces/ConsoleLogger.h
   ${CMAKE_SOURCE_DIR}/inc/LoggerInterfaces/ILogger.h
   ${CMAKE_SOURCE_DIR}/inc/LoggerInterfaces/Logging.h
   ${CMAKE_SOURCE_DIR}/inc/LoggerInterfaces/LogLevel.h
 )
 
+set(PUBLIC_HFILES
+  ${BITFUNNEL_HFILES}
+  ${INDEX_HFILES}
+  ${UTILITIES_HFILES}
+  ${LOGGER_HFILES}
+)
+
 COMBINE_FILE_LISTS()
 
 # Public header files
-source_group("BitFunnel" FILES ${PUBLIC_HFILES})
 add_custom_target(inc SOURCES ${PUBLIC_HFILES})
 set_property(TARGET inc PROPERTY FOLDER "")
+source_group("BitFunnel" FILES ${BITFUNNEL_HFILES})
+source_group("BitFunnel\\Index" FILES ${INDEX_HFILES})
+source_group("BitFunnel\\Utilities" FILES ${UTILITIES_HFILES})
+source_group("Logger" FILES ${LOGGER_HFILES})
 
 #
 # Local package include directories.
