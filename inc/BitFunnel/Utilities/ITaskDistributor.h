@@ -22,6 +22,10 @@
 
 #pragma once
 
+#include <stddef.h>
+#include <vector>
+
+#include "BitFunnel/Utilities/ITaskProcessor.h"
 
 namespace BitFunnel
 {
@@ -61,7 +65,7 @@ namespace BitFunnel
 
     namespace Factories
     {
-        ITaskDistributor* 
+        ITaskDistributor*
             CreateTaskDistributor(const std::vector<ITaskProcessor*>& processors,
                                   size_t taskCount);
     }
