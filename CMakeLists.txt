@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Remove the warning that WIN32 is not defined in Cygwin any more.
-set(CMAKE_LEGACY_CYGWIN_WIN32 0) 
+set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 project(BitFunnel_CMake)
 
@@ -28,7 +28,7 @@ endif()
 # and gmock_main
 add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
                  ${CMAKE_BINARY_DIR}/googletest-build)
- 
+
 include_directories(
   ${gtest_SOURCE_DIR}/include
 )
@@ -141,6 +141,8 @@ add_subdirectory(src/Common/CmdLineParser)
 add_subdirectory(src/Common/CsvTsv)
 add_subdirectory(src/Common/Utilities)
 add_subdirectory(src/Index)
+
+add_subdirectory(tools/StatisticsBuilder)
 
 add_custom_target(TOPLEVEL SOURCES
 #  CMakeLists-googletest.txt.in
