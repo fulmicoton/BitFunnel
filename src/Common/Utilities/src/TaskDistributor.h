@@ -56,7 +56,7 @@ namespace BitFunnel
     class TaskDistributor : public ITaskDistributor, NonCopyable
     {
     public:
-        TaskDistributor(const std::vector<ITaskProcessor*>& processors,
+        TaskDistributor(const std::vector<std::unique_ptr<ITaskProcessor>>& processors,
                         size_t taskCount);
 
         ~TaskDistributor();
@@ -71,7 +71,7 @@ namespace BitFunnel
         void WaitForCompletion();
 
     private:
-        const std::vector<ITaskProcessor*>& m_processors;
+        std::vector<std::unique_ptr<ITaskProcessor>> const & m_processors;
         size_t m_taskCount;
         size_t m_nextTaskId;
 
