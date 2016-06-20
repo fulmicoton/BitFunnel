@@ -22,11 +22,11 @@
 
 #pragma once
 
-#include <mutex>  // For std::mutex.
-#include <vector>
+#include <mutex>                                    // std::mutex member.
+#include <vector>                                   // std::vector member.
 
-#include "BitFunnel/Utilities/ITaskDistributor.h"  // Inherits from ITaskDistributor.
-#include "BitFunnel/NonCopyable.h"                 // Inherits from NonCopyable.
+#include "BitFunnel/Utilities/ITaskDistributor.h"   // Inherits from ITaskDistributor.
+#include "BitFunnel/NonCopyable.h"                  // Inherits from NonCopyable.
 
 
 namespace BitFunnel
