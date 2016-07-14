@@ -179,5 +179,3 @@ of Document.
 
 ### Ensure index branch builds and passes tests on Linux and OSX. [aclemmer]
 
-
-

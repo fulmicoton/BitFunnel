@@ -116,13 +116,20 @@ namespace BitFunnel
     }
 
 
-    void Term::Print(std::ostream& out) const
+    /*void Term::Print(std::ostream& out) const
     {
         out << "Term("
             << std::hex << m_rawHash
             << ", "
             << std::dec << (size_t)m_gramSize
             << ")";
+    }*/
+
+    void Term::Print(std::ostream& out) const
+    {
+        out << std::hex << m_rawHash
+            << ", "
+            << std::dec << (size_t)m_gramSize;
     }
 
 

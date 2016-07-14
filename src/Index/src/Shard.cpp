@@ -52,7 +52,7 @@ namespace BitFunnel
     }
 
 
-    void Shard::TemporaryPrintFrequencies(std::ostream& out)
+/*    void Shard::TemporaryPrintFrequencies(std::ostream& out)
     {
         out << "Term frequency table for shard " << m_id << ":" << std::endl;
         for (auto it = m_temporaryFrequencyTable.begin(); it != m_temporaryFrequencyTable.end(); ++it)
@@ -64,7 +64,29 @@ namespace BitFunnel
                 << std::endl;
         }
         out << std::endl;
+    } */
+
+    void Shard::TemporaryPrintFrequencies(std::ostream& out)
+    {
+        std::cout << m_id;
+
+        out << "posting_hash "
+            << ", "
+            << "ngram_size"
+            << ", "
+            << "doc_count"
+            << std::endl;
+
+        for (auto it = m_temporaryFrequencyTable.begin(); it != m_temporaryFrequencyTable.end(); ++it)
+        {
+            it->first.Print(out);
+            out << ", "
+                << it->second
+                << std::endl;
+        }
+        out << std::endl;
     }
+
 
 
     DocumentHandleInternal Shard::AllocateDocument()

@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 #include <iostream>     // TODO: Remove this temporary header.
+#include <fstream>
 #include <memory>
 
 #include "BitFunnel/Exceptions.h"
@@ -49,11 +50,16 @@ namespace BitFunnel
     void Ingestor::PrintStatistics() const
     {
         std::cout << "Document count: " << m_documentCount << std::endl;
-        std::cout << "Term count: " << m_postingsCount.m_totalCount << std::endl;
+        //std::cout << "Posting count: " << m_postingsCount.m_totalCount << //std::endl;
 
         for (auto it = m_shards.begin(); it != m_shards.end(); ++it)
         {
-            (*it)->TemporaryPrintFrequencies(std::cout);
+            //(*it)->TemporaryPrintFrequencies(std::cout);
+            std::ofstream myfile;
+            myfile.open("/Users/admin/src/BitFunnel/src/Index/UnitTest/Data/big_wiki.csv");
+            (*it)->TemporaryPrintFrequencies(myfile);
+            myfile.close();
+
         }
 
         std::cout << "Posting count histogram" << std::endl;
