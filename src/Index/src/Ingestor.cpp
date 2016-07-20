@@ -56,15 +56,15 @@ namespace BitFunnel
         {
             //(*it)->TemporaryPrintFrequencies(std::cout);
             std::ofstream myfile;
-            myfile.open("/Users/admin/src/BitFunnel/src/Index/UnitTest/Data/big_wiki.csv");
+            myfile.open("/Users/admin/src/BitFunnel/src/Index/UnitTest/Data/wiki_term_stat.csv");
             (*it)->TemporaryPrintFrequencies(myfile);
             myfile.close();
 
         }
 
-        std::cout << "Posting count histogram" << std::endl;
+        //std::cout << "Posting count histogram" << std::endl;
 
-        m_postingsCount.Write(std::cout);
+        //m_postingsCount.Write(std::cout);
     }
 
 

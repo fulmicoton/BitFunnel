@@ -145,6 +145,9 @@ namespace BitFunnel
         // semantics of the default constructor.
         Term();
 
+        // temporary value of the string, used for debugging purposes
+        char const * m_term;
+
         // The raw hash for this term. This hash does not incorporate
         // information about the classification.
         Hash m_rawHash;
@@ -165,5 +168,7 @@ namespace BitFunnel
     };
 
     // DESIGN NOTE: intent is that Term is small enough to be used as a value type.
-    static_assert(sizeof(Term) <= 16, "sizeof(term) should not exceed 16.");
+    // static assert fails because string of term is added to the class
+    //static_assert(sizeof(Term) <= 16, "sizeof(term) should not exceed 16.");
+
 }

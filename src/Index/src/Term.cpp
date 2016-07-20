@@ -48,7 +48,8 @@ namespace BitFunnel
     Term::Term(char const * text,
                StreamId stream,
                IDocumentFrequencyTable const & /*docFreqTable*/)
-        : m_rawHash(ComputeRawHash(text)),
+        : m_term(text),
+          m_rawHash(ComputeRawHash(text)),
           m_stream(stream),
           m_gramSize(1),
           m_idfSum(0),      // TODO: use correct value
@@ -63,7 +64,6 @@ namespace BitFunnel
         {
             throw FatalError("Attempting to combine terms with different streams.");
         }
-
         m_rawHash = rotl64By1(m_rawHash) ^ term.m_rawHash;
         m_gramSize += term.m_gramSize;
         m_idfSum += term.m_idfSum;
@@ -128,6 +128,8 @@ namespace BitFunnel
     void Term::Print(std::ostream& out) const
     {
         out << std::hex << m_rawHash
+            << ", "
+            << m_term
             << ", "
             << std::dec << (size_t)m_gramSize;
     }

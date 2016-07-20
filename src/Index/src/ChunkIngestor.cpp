@@ -43,7 +43,7 @@ namespace BitFunnel
 
     void ChunkIngestor::OnFileEnter()
     {
-        std::cout << "ChunkIngestor::OnFileEnter" << std::endl;
+        //std::cout << "ChunkIngestor::OnFileEnter" << std::endl;
     }
 
 
@@ -56,7 +56,7 @@ namespace BitFunnel
 
     void ChunkIngestor::OnStreamEnter(char const * name)
     {
-        std::cout << "ChunkIngestor::OnStreamEnter: name:" << name << std::endl;
+        //std::cout << "ChunkIngestor::OnStreamEnter: name:" << name << std::endl;
         m_currentDocument->OpenStream(name);
     }
 
@@ -70,21 +70,22 @@ namespace BitFunnel
 
     void ChunkIngestor::OnStreamExit()
     {
-        std::cout << "ChunkIngestor::OnStreamExit" << std::endl;
+        //std::cout << "ChunkIngestor::OnStreamExit" << std::endl;
         m_currentDocument->CloseStream();
     }
 
 
     void ChunkIngestor::OnDocumentExit()
     {
-        std::cout << "ChunkIngestor::OnDocumentExit" << std::endl;
+        //std::cout << "ChunkIngestor::OnDocumentExit" << std::endl;
         m_ingestor.Add(0, *m_currentDocument);
         m_currentDocument.reset(nullptr);
+        //on document exit print the contents of the document??
     }
 
 
     void ChunkIngestor::OnFileExit()
     {
-        std::cout << "ChunkIngestor::OnFileExit" << std::endl;
+        //std::cout << "ChunkIngestor::OnFileExit" << std::endl;
     }
 }

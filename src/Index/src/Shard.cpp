@@ -21,6 +21,8 @@
 // THE SOFTWARE.
 
 #include <iostream>     // TODO: Remove this temporary header.
+#include <fstream>      // TODO: Remove this, temporary added for writing shit
+                        //       shit to file
 
 #include "BitFunnel/Exceptions.h"
 #include "Shard.h"
@@ -40,9 +42,16 @@ namespace BitFunnel
 
     void Shard::TemporaryAddPosting(Term const & term, DocIndex index)
     {
-        std::cout << "  " << index << ": ";
-        term.Print(std::cout);
-        std::cout << std::endl;
+        //std::cout << "  " << index << ": ";
+        //term.Print(std::cout);
+        //std::cout << std::endl;
+
+        std::ofstream myfile;
+        myfile.open("/Users/admin/src/BitFunnel/src/Index/UnitTest/Data/wiki_doc_stat.csv", std::ios::app);
+        myfile << index << ", ";
+        term.Print(myfile);
+        myfile << std::endl;
+        myfile.close();
 
         {
             // TODO: Remove this lock once it is incorporated into the frequency table class.
@@ -71,6 +80,8 @@ namespace BitFunnel
         std::cout << m_id;
 
         out << "posting_hash "
+            << ", "
+            << "posting_string"
             << ", "
             << "ngram_size"
             << ", "

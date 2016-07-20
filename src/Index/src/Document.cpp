@@ -46,7 +46,7 @@ namespace BitFunnel
     void Document::Ingest(DocumentHandle handle) const
     {
         // TODO: convert unique terms into postings.
-        std::cout << "Document::Ingest()" << std::endl;
+        //std::cout << "Document::Ingest()" << std::endl;
         std::cout << "  "
                   << GetPostingCount()
                   << " postings"
