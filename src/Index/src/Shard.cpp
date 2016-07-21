@@ -47,7 +47,7 @@ namespace BitFunnel
         //std::cout << std::endl;
 
         std::ofstream myfile;
-        myfile.open("/Users/admin/src/BitFunnel/src/Index/UnitTest/Data/wiki_doc_stat.csv", std::ios::app);
+        myfile.open("shard_output.csv", std::ios::app);
         myfile << index << ", ";
         term.Print(myfile);
         myfile << std::endl;
@@ -90,9 +90,9 @@ namespace BitFunnel
 
         for (auto it = m_temporaryFrequencyTable.begin(); it != m_temporaryFrequencyTable.end(); ++it)
         {
-            it->first.Print(out);
+            it->first.Print(out); // posting_hash, posting_string, ngram_size.
             out << ", "
-                << it->second
+                << it->second    // doc_count.
                 << std::endl;
         }
         out << std::endl;

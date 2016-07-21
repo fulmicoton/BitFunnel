@@ -56,7 +56,7 @@ namespace BitFunnel
         {
             //(*it)->TemporaryPrintFrequencies(std::cout);
             std::ofstream myfile;
-            myfile.open("/Users/admin/src/BitFunnel/src/Index/UnitTest/Data/wiki_term_stat.csv");
+            myfile.open("ingestor_output.csv");
             (*it)->TemporaryPrintFrequencies(myfile);
             myfile.close();
 

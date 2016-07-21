@@ -24,6 +24,7 @@
 
 #include <iosfwd>       // TODO: Remove this. For temporary Print().
 #include <stdint.h>     // For uint8_t
+#include <string>
 
 
 namespace BitFunnel
@@ -146,7 +147,7 @@ namespace BitFunnel
         Term();
 
         // temporary value of the string, used for debugging purposes
-        char const * m_term;
+        std::string m_term;
 
         // The raw hash for this term. This hash does not incorporate
         // information about the classification.
