@@ -37,6 +37,7 @@
 
 namespace BitFunnel
 {
+    class IFileManager;
     class IRecycler;
     class ISliceBufferAllocator;
 
@@ -44,7 +45,8 @@ namespace BitFunnel
     class Ingestor : public IIngestor, NonCopyable
     {
     public:
-        Ingestor(IDocumentDataSchema const & docDataSchema,
+        Ingestor(IFileManager & fileManager,
+                 IDocumentDataSchema const & docDataSchema,
                  IRecycler& recycle,
                  ITermTable const & termTable,
                  ISliceBufferAllocator& sliceBufferAllocator);
@@ -52,9 +54,7 @@ namespace BitFunnel
         // TODO: Remove this temporary method.
         virtual void PrintStatistics() const override;
 
-        virtual void WriteDocumentFrequencyTable(std::ostream& out) const override;
-        virtual void WriteDocumentLengthHistogram(std::ostream & out) const override;
-        virtual void WriteCumulativePostingCounts(std::ostream & out) const override;
+        virtual void WriteStatistics() const override;
 
         // Adds a document to the index. Throws if there is no space to add the
         // document which means the system is running at its maximum capacity.
@@ -125,6 +125,7 @@ namespace BitFunnel
         virtual void ExpireGroup(GroupId groupId) override;
 
     private:
+        IFileManager& m_fileManager;
         IRecycler& m_recycler;
 
         // TODO: Replace these tempoary statistics variables with document
@@ -144,7 +145,7 @@ namespace BitFunnel
         std::mutex m_deleteDocumentLock;
 
 
-        DocumentLengthHistogram m_postingsCount;
+        DocumentLengthHistogram m_histogram;
 
         // Allocator used to allocate memory for the slice buffers within
         // Shards. ISliceBufferAllocator uses IBlockAllocator to allocate
