@@ -105,7 +105,7 @@ namespace BitFunnel
             Rank m_rank;
             double m_density;
             double m_adhocFrequency;
-            TermTableBuilder::RowIdInserter& m_inserter;
+            TermTableBuilder::RowIdInserter m_inserter;
 
             // Sum of frequencies of all adhoc terms. Used to compute the
             // number of adhoc rows.
