@@ -92,7 +92,7 @@ namespace BitFunnel
         return 
             m_explicitRowCounts[rank] +
             m_adhocRowCounts[rank] +
-            (rank == 0) ? m_factRowCount : 0;
+            ((rank == 0) ? m_factRowCount : 0);
     }
 
 
