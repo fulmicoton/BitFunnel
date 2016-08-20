@@ -30,6 +30,7 @@
 namespace BitFunnel
 {
     class IConfiguration;
+    class IIngestor;
     class IRecycler;
     class ITermTable2;
 
@@ -55,6 +56,7 @@ namespace BitFunnel
         virtual void StopIndex() = 0;
 
         virtual IConfiguration const & GetConfiguration() const = 0;
+        virtual IIngestor & GetIngestor() const = 0;
         virtual IRecycler & GetRecycler() const = 0;
         virtual ITermTable2 const & GetTermTable() const = 0;
     };

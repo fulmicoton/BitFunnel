@@ -40,7 +40,7 @@ namespace BitFunnel
         : m_taskFactory(new TaskFactory(*this)),
           // Start one extra thread for the Recycler.
           m_taskPool(new TaskPool(threadCount + 1)),
-          m_index(Factories::CreateSimpleIndex(directory, gramSize))
+          m_index(Factories::CreateSimpleIndex(directory, gramSize, false))
     {
         RegisterCommands();
     }

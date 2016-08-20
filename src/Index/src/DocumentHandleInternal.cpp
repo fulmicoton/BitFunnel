@@ -23,7 +23,7 @@
 
 // #define HORRIBLE_HACK_DONT_CHECK_IN
 
-#include "BitFunnel/TermInfo.h"
+#include "BitFunnel/RowIdSequence.h"
 #include "DocumentHandleInternal.h"
 #include "DocTableDescriptor.h"
 #include "LoggerInterfaces/Logging.h"
@@ -75,29 +75,41 @@ namespace BitFunnel
 
     void DocumentHandle::AssertFact(FactHandle fact, bool value)
     {
-        ITermTable const & termTable = m_slice->GetShard().GetTermTable();
+        ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
 
-        TermInfo termInfo(fact, termTable);
+        Term term(fact, 0u, 0u, 1u);
+        RowIdSequence rows(term, termTable);
+        auto it = rows.begin();
 
-        LogAssertB(termInfo.MoveNext(),"Invalid FactHandle.");
-        const RowId rowIdForFact = termInfo.Current();
+        if (it == rows.end())
+        {
+            RecoverableError error("DocumentHandle::AssertFact: expected at least one row.");
+            throw error;
+        }
 
-        LogAssertB(!termInfo.MoveNext(),
-                   "Fact must correspond to a single row.");
+        const RowId row = *it;
+
+        ++it;
+        if (it != rows.end())
+        {
+            RecoverableError error("DocumentHandle::AssertFact: expected no more than one row.");
+            throw error;
+
+        }
 
         RowTableDescriptor const & rowTable =
-            m_slice->GetRowTable(rowIdForFact.GetRank());
+            m_slice->GetRowTable(row.GetRank());
 
         if (value)
         {
             rowTable.SetBit(m_slice->GetSliceBuffer(),
-                            rowIdForFact.GetIndex(),
+                            row.GetIndex(),
                             m_index);
         }
         else
         {
             rowTable.ClearBit(m_slice->GetSliceBuffer(),
-                              rowIdForFact.GetIndex(),
+                              row.GetIndex(),
                               m_index);
         }
     }
@@ -105,20 +117,19 @@ namespace BitFunnel
 
     void DocumentHandle::AddPosting(Term const & term)
     {
+        // TODO: Is this call in the right place?
         m_slice->GetShard().TemporaryAddPosting(term, m_index);
 
-#ifndef HORRIBLE_HACK_DONT_CHECK_IN
-        ITermTable const & termTable = m_slice->GetShard().GetTermTable();
-        TermInfo termInfo(term, termTable);
-        while (termInfo.MoveNext())
+        ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
+        RowIdSequence rows(term, termTable);
+
+        for (auto const row : rows)
         {
-            const RowId row = termInfo.Current();
             m_slice->GetRowTable(row.GetRank()).
                 SetBit(m_slice->GetSliceBuffer(),
                        row.GetIndex(),
                        m_index);
         }
-#endif
     }
 
 

@@ -34,19 +34,22 @@ namespace BitFunnel
 {
     std::unique_ptr<ISimpleIndex>
         Factories::CreateSimpleIndex(char const * directory,
-                                     size_t gramSize)
+                                     size_t gramSize,
+                                     bool generateTermToText)
     {
         return std::unique_ptr<ISimpleIndex>(
-            new SimpleIndex(directory, gramSize));
+            new SimpleIndex(directory, gramSize, generateTermToText));
     }
 
 
     SimpleIndex::SimpleIndex(char const * directory,
-                             size_t gramSize)
+                             size_t gramSize,
+                             bool generateTermToText)
         // TODO: Don't like passing *this to TaskFactory.
         // What if TaskFactory calls back before SimpleIndex is fully initialized?
         : m_directory(directory),
-          m_gramSize(static_cast<Term::GramSize>(gramSize))
+          m_gramSize(static_cast<Term::GramSize>(gramSize)),
+          m_generateTermtoText(generateTermToText)
     {
     }
 
@@ -93,13 +96,12 @@ namespace BitFunnel
         // m_shardDefinition->AddShard(2000);
         // m_shardDefinition->AddShard(3000);
 
-        //m_ingestor = Factories::CreateIngestor(*m_fileManager,
-        //                                       *m_schema,
-        //                                       *m_recycler,
-        //                                       *m_termTable,
-        //                                       *m_shardDefinition,
-        //                                       *m_sliceAllocator));
-
+        m_ingestor = Factories::CreateIngestor(*m_fileManager,
+                                               *m_schema,
+                                               *m_recycler,
+                                               *m_termTable,
+                                               *m_shardDefinition,
+                                               *m_sliceAllocator);
     }
 
 
@@ -112,6 +114,12 @@ namespace BitFunnel
     IConfiguration const & SimpleIndex::GetConfiguration() const
     {
         return *m_configuration;
+    }
+
+
+    IIngestor & SimpleIndex::GetIngestor() const
+    {
+        return *m_ingestor;
     }
 
 

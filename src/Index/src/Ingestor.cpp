@@ -44,7 +44,7 @@ namespace BitFunnel
     Factories::CreateIngestor(IFileManager& fileManager,
                               IDocumentDataSchema const & docDataSchema,
                               IRecycler& recycler,
-                              ITermTable const & termTable,
+                              ITermTable2 const & termTable,
                               IShardDefinition const & shardDefinition,
                               ISliceBufferAllocator& sliceBufferAllocator)
     {
@@ -60,7 +60,7 @@ namespace BitFunnel
     Ingestor::Ingestor(IFileManager& fileManager,
                        IDocumentDataSchema const & docDataSchema,
                        IRecycler& recycler,
-                       ITermTable const & termTable,
+                       ITermTable2 const & termTable,
                        IShardDefinition const & shardDefinition,
                        ISliceBufferAllocator& sliceBufferAllocator)
         : m_fileManager(fileManager),

@@ -6,7 +6,7 @@
 namespace BitFunnel
 {
     class IDocumentDataSchema;
-    class ITermTable;
+    class ITermTable2;
 
     // Given a slice capacity, get the necessary buffer size to accomodate that
     // capacity.
@@ -15,7 +15,7 @@ namespace BitFunnel
     // order for rowCount to be correct.
     size_t GetBufferSize(DocIndex capacity,
                          IDocumentDataSchema const & schema,
-                         ITermTable const & termTable);
+                         ITermTable2 const & termTable);
 
     size_t GetEmptyTermTableBufferSize(DocIndex capacity,
                                        std::vector<RowIndex> const & rowCounts,

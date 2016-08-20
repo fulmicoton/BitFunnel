@@ -25,9 +25,10 @@
 #include "BitFunnel/Index/IIngestor.h"
 #include "BitFunnel/Index/IRecycler.h"
 #include "BitFunnel/Index/ISliceBufferAllocator.h"
-#include "BitFunnel/ITermTable.h"
+//#include "BitFunnel/ITermTable.h"
 #include "BitFunnel/ITermTable2.h"
 #include "BitFunnel/Row.h"
+#include "BitFunnel/RowIdSequence.h"
 #include "BitFunnel/TermInfo.h"
 #include "IRecyclable.h"
 #include "LoggerInterfaces/Logging.h"
@@ -39,18 +40,31 @@
 namespace BitFunnel
 {
     // Extracts a RowId used to mark documents as active/soft-deleted.
-    static RowId RowIdForDeletedDocument(ITermTable const & termTable)
+    static RowId RowIdForDeletedDocument(ITermTable2 const & termTable)
     {
-        TermInfo termInfo(ITermTable::GetSoftDeletedTerm(), termTable);
+        RowIdSequence rows(termTable.GetSoftDeletedTerm(), termTable);
 
-        LogAssertB(termInfo.MoveNext(), "Invalid row.");
-        const RowId rowId = termInfo.Current();
+        auto it = rows.begin();
+        if (it == rows.end())
+        {
+            RecoverableError error("RowIdForDeletedDocument: expected at least one row.");
+            throw error;
+        }
+        const RowId rowId = *it;
 
-        LogAssertB(rowId.GetRank() == 0,
-                   "Soft deleted row must be rank 0.");
+        if (rowId.GetRank() != 0)
+        {
+            RecoverableError error("RowIdForDeletedDocument: soft deleted row must be rank 0..");
+            throw error;
+        }
 
-        LogAssertB(!termInfo.MoveNext(),
-                   "Soft deleted row must correspond to a single row.");
+        ++it;
+        if (it != rows.end())
+        {
+            RecoverableError error("RowIdForDeletedDocument: expected no more than one row.");
+            throw error;
+
+        }
 
         return rowId;
     }
@@ -58,7 +72,7 @@ namespace BitFunnel
 
     Shard::Shard(IIngestor& ingestor,
                  size_t id,
-                 ITermTable const & termTable,
+                 ITermTable2 const & termTable,
                  IDocumentDataSchema const & docDataSchema,
                  ISliceBufferAllocator& sliceBufferAllocator,
                  size_t sliceBufferSize)
@@ -138,13 +152,13 @@ namespace BitFunnel
     /* static */
     DocIndex Shard::GetCapacityForByteSize(size_t bufferSizeInBytes,
                                            IDocumentDataSchema const & schema,
-                                           ITermTable const & termTable)
+                                           ITermTable2 const & termTable)
     {
         DocIndex capacity = 0;
         for (;;)
         {
             const DocIndex newSuggestedCapacity = capacity +
-                Row::DocumentsInRank0Row(1);
+                Row::DocumentsInRank0Row(1, termTable.GetMaxRankUsed());
             const size_t newBufferSize =
                 InitializeDescriptors(nullptr,
                                       newSuggestedCapacity,
@@ -215,7 +229,7 @@ namespace BitFunnel
     }
 
 
-    ITermTable const & Shard::GetTermTable() const
+    ITermTable2 const & Shard::GetTermTable() const
     {
         return m_termTable;
     }
@@ -229,49 +243,49 @@ namespace BitFunnel
     }
 
 
-    /* static */
-    // WARNING: During a brief transition from ITermTable to ITermTable2, we
-    // are maintaining two versions of InitializeDescriptors. Please be sure
-    // to make changes to both versions.
-    size_t Shard::InitializeDescriptors(Shard* shard,
-                                        DocIndex sliceCapacity,
-                                        IDocumentDataSchema const & docDataSchema,
-                                        ITermTable const & termTable)
-    {
-        ptrdiff_t currentOffset = 0;
+    ///* static */
+    //// WARNING: During a brief transition from ITermTable to ITermTable2, we
+    //// are maintaining two versions of InitializeDescriptors. Please be sure
+    //// to make changes to both versions.
+    //size_t Shard::InitializeDescriptors(Shard* shard,
+    //                                    DocIndex sliceCapacity,
+    //                                    IDocumentDataSchema const & docDataSchema,
+    //                                    ITermTable const & termTable)
+    //{
+    //    ptrdiff_t currentOffset = 0;
 
-        // Start of the DocTable is at offset 0.
-        if (shard != nullptr)
-        {
-            shard->m_docTable.reset(new DocTableDescriptor(sliceCapacity,
-                                                           docDataSchema,
-                                                           currentOffset));
-        }
+    //    // Start of the DocTable is at offset 0.
+    //    if (shard != nullptr)
+    //    {
+    //        shard->m_docTable.reset(new DocTableDescriptor(sliceCapacity,
+    //                                                       docDataSchema,
+    //                                                       currentOffset));
+    //    }
 
-        currentOffset += DocTableDescriptor::GetBufferSize(sliceCapacity, docDataSchema);
+    //    currentOffset += DocTableDescriptor::GetBufferSize(sliceCapacity, docDataSchema);
 
-        for (Rank r = 0; r <= c_maxRankValue; ++r)
-        {
-            // TODO: see if this alignment matters.
-            // currentOffset = RoundUp(currentOffset, c_rowTableByteAlignment);
+    //    for (Rank r = 0; r <= c_maxRankValue; ++r)
+    //    {
+    //        // TODO: see if this alignment matters.
+    //        // currentOffset = RoundUp(currentOffset, c_rowTableByteAlignment);
 
-            const RowIndex rowCount = termTable.GetTotalRowCount(r);
+    //        const RowIndex rowCount = termTable.GetTotalRowCount(r);
 
-            if (shard != nullptr)
-            {
-                shard->m_rowTables.emplace_back(sliceCapacity, rowCount, r, currentOffset);
-            }
+    //        if (shard != nullptr)
+    //        {
+    //            shard->m_rowTables.emplace_back(sliceCapacity, rowCount, r, currentOffset);
+    //        }
 
-            currentOffset += RowTableDescriptor::GetBufferSize(sliceCapacity, rowCount, r);
-        }
+    //        currentOffset += RowTableDescriptor::GetBufferSize(sliceCapacity, rowCount, r);
+    //    }
 
-        // A pointer to a Slice is placed at the end of the slice buffer.
-        currentOffset += sizeof(void*);
+    //    // A pointer to a Slice is placed at the end of the slice buffer.
+    //    currentOffset += sizeof(void*);
 
-        const size_t sliceBufferSize = static_cast<size_t>(currentOffset);
+    //    const size_t sliceBufferSize = static_cast<size_t>(currentOffset);
 
-        return sliceBufferSize;
-    }
+    //    return sliceBufferSize;
+    //}
 
 
     /* static */

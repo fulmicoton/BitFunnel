@@ -72,7 +72,7 @@ namespace BitFunnel
         // is determined by a value returned by Row::DocumentsInRank0Row(1).
         Shard(IIngestor& ingestor,
               size_t id,
-              ITermTable const & termTable,
+              ITermTable2 const & termTable,
               IDocumentDataSchema const & docDataSchema,
               ISliceBufferAllocator& sliceBufferAllocator,
               size_t sliceBufferSize);
@@ -157,7 +157,7 @@ namespace BitFunnel
         IIngestor& GetIndex() const;
 
         // Returns term table associated with this shard.
-        ITermTable const & GetTermTable() const;
+        ITermTable2 const & GetTermTable() const;
 
         // Descriptor for RowTables and DocTable.
         DocTableDescriptor const & GetDocTable() const;
@@ -195,10 +195,10 @@ namespace BitFunnel
         // function combines both actions in order to avoid code for the two
         // scenarios.
         // DESIGN NOTE: This is made public in order to be used in unit tests.
-        static size_t InitializeDescriptors(Shard* shard,
-                                            DocIndex sliceCapacity,
-                                            IDocumentDataSchema const & docDataSchema,
-                                            ITermTable const & termTable);
+        //static size_t InitializeDescriptors(Shard* shard,
+        //                                    DocIndex sliceCapacity,
+        //                                    IDocumentDataSchema const & docDataSchema,
+        //                                    ITermTable const & termTable);
 
         // TODO: This is the new version of InitializeDescriptors, based on
         // ITermTable2. Need to migrate away from old version.
@@ -212,7 +212,7 @@ namespace BitFunnel
         static DocIndex
             GetCapacityForByteSize(size_t bufferByteSize,
                                    IDocumentDataSchema const & schema,
-                                   ITermTable const & termTable);
+                                   ITermTable2 const & termTable);
 
     private:
         // Tries to add a new slice. Throws if no memory in the allocator.
@@ -230,7 +230,7 @@ namespace BitFunnel
         size_t m_id;
 
         // TermTable for this shard.
-        ITermTable const & m_termTable;
+        ITermTable2 const & m_termTable;
 
         // Allocator that provides blocks of memory for Slice buffers.
         ISliceBufferAllocator& m_sliceBufferAllocator;

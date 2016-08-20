@@ -46,7 +46,7 @@ namespace BitFunnel
     class IRecycler;
     class IShardDefinition;
     class ISliceBufferAllocator;
-    class ITermTable;
+    class ITermTable2;
 
 
     class Ingestor : public IIngestor, NonCopyable
@@ -55,7 +55,7 @@ namespace BitFunnel
         Ingestor(IFileManager & fileManager,
                  IDocumentDataSchema const & docDataSchema,
                  IRecycler& recycle,
-                 ITermTable const & termTable,
+                 ITermTable2 const & termTable,
                  IShardDefinition const & shardDefinition,
                  ISliceBufferAllocator& sliceBufferAllocator);
 

@@ -56,7 +56,7 @@ namespace BitFunnel
             CreateIngestor(IFileManager& filemanager,
                            IDocumentDataSchema const & docDataSchema,
                            IRecycler& recycler,
-                           ITermTable const & termTable,
+                           ITermTable2 const & termTable,
                            IShardDefinition const & shardDefinition,
                            ISliceBufferAllocator& sliceBufferAllocator);
 
@@ -75,7 +75,8 @@ namespace BitFunnel
         std::unique_ptr<IRecycler> CreateRecycler();
 
         std::unique_ptr<ISimpleIndex> CreateSimpleIndex(char const * directory,
-                                                        size_t gramSize);
+                                                        size_t gramSize,
+                                                        bool generateTermToText);
 
         std::unique_ptr<ISliceBufferAllocator>
             CreateSliceBufferAllocator(size_t blockSize, size_t blockCount);

@@ -29,7 +29,7 @@
 #include "BitFunnel/Index/IConfiguration.h"         // Parameterizes std::unique_ptr.
 #include "BitFunnel/Index/IDocumentDataSchema.h"    // Parameterizes std::unique_ptr.
 #include "BitFunnel/Index/IIndexedIdfTable.h"       // Parameterizes std::unique_ptr.
-//#include "BitFunnel/Index/IIngestor.h"              // Parameterizes std::unique_ptr.
+#include "BitFunnel/Index/IIngestor.h"              // Parameterizes std::unique_ptr.
 #include "BitFunnel/Index/IRecycler.h"              // Parameterizes std::unique_ptr.
 #include "BitFunnel/Index/ISliceBufferAllocator.h"  // Parameterizes std::unique_ptr.
 #include "BitFunnel/Index/ISimpleIndex.h"           // Parameterizes std::unique_ptr.
@@ -44,12 +44,14 @@ namespace BitFunnel
     {
     public:
         SimpleIndex(char const * directory,
-                    size_t gramSize);
+                    size_t gramSize,
+                    bool generateTermtoText);
 
         virtual void StartIndex() override;
         virtual void StopIndex() override;
 
         virtual IConfiguration const & GetConfiguration() const override;
+        virtual IIngestor & GetIngestor() const override;
         virtual IRecycler & GetRecycler() const override;
         virtual ITermTable2 const & GetTermTable() const override;
 
@@ -62,6 +64,7 @@ namespace BitFunnel
 
         std::string m_directory;
         Term::GramSize m_gramSize;
+        bool m_generateTermtoText;
 
 
         //
@@ -80,6 +83,6 @@ namespace BitFunnel
         std::unique_ptr<ISliceBufferAllocator> m_sliceAllocator;
         std::unique_ptr<IShardDefinition> m_shardDefinition;
 
-        //        std::unique_ptr<IIngestor> m_ingestor;
+        std::unique_ptr<IIngestor> m_ingestor;
     };
 }
