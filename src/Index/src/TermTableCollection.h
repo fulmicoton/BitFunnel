@@ -32,6 +32,7 @@
 namespace BitFunnel
 {
     class IFileManager;
+    class ITermTable2;
 
     class TermTableCollection : public ITermTableCollection
     {

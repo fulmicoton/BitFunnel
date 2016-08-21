@@ -28,7 +28,7 @@
 #include <ostream>                              // TODO: Remove this temporary include.
 #include <vector>
 
-#include "BitFunnel/NonCopyable.h"
+#include "BitFunnel/NonCopyable.h"          // Base class.
 #include "BitFunnel/Term.h"
 #include "DocTableDescriptor.h"              // Required for embedded std::unique_ptr.
 #include "DocumentFrequencyTableBuilder.h"   // std::unique_ptr to this.
@@ -40,7 +40,6 @@
 namespace BitFunnel
 {
     //class IDocumentDataSchema;
-    //class IngestionIndex;
     class ISliceBufferAllocator;
     class ITermTable;
     class ITermTable2;
@@ -77,7 +76,6 @@ namespace BitFunnel
 
         virtual ~Shard();
 
-//        void TemporaryAddPosting(Term const & term, DocIndex index);
         void AddPosting(Term const & term, DocIndex index, void* sliceBuffer);
         void AssertFact(FactHandle fact, bool value, DocIndex index, void* sliceBuffer);
 
@@ -195,14 +193,8 @@ namespace BitFunnel
         // it also initializes its DocTable and RowTable descriptors.  The same
         // function combines both actions in order to avoid code for the two
         // scenarios.
-        // DESIGN NOTE: This is made public in order to be used in unit tests.
-        //static size_t InitializeDescriptors(Shard* shard,
-        //                                    DocIndex sliceCapacity,
-        //                                    IDocumentDataSchema const & docDataSchema,
-        //                                    ITermTable const & termTable);
-
-        // TODO: This is the new version of InitializeDescriptors, based on
-        // ITermTable2. Need to migrate away from old version.
+        // DESIGN NOTE: This is made public to help determine the block size for
+        // the SliceBufferAllocator
         static size_t InitializeDescriptors(Shard* shard,
                                             DocIndex sliceCapacity,
                                             IDocumentDataSchema const & docDataSchema,

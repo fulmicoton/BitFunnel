@@ -23,8 +23,7 @@
 
 #pragma once
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>                      // size_t embedded.
 
 #include "BitFunnel/BitFunnelTypes.h"   // DocIndex parameter.
 #include "BitFunnel/RowId.h"            // RowIndex parameter.

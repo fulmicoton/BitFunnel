@@ -216,14 +216,6 @@ namespace BitFunnel
     void TermTable::Seal()
     {
         ThrowIfSealed(true);
-
-        //// Make an entry for the soft-deleted term.
-        //// TODO: Comment explaining why system rows are added last.
-        //OpenTerm();
-        //// TODO: Need to figure out shard. Use zero for now.
-        //AddRowId(RowId(0, 0, m_explicitRowCounts[0]++));
-        //CloseTerm(GetSoftDeletedTerm().GetRawHash());
-
         m_sealed = true;
 
         // Determine maximum rank in use.

@@ -89,12 +89,6 @@ namespace BitFunnel
         }
 
 
-        //// Make an entry for the soft-deleted term.
-        //m_termTable.OpenTerm();
-        //m_rowAssigners[0]->Assign(1.0, 1, true);
-        //m_termTable.CloseTerm(m_termTable.GetSoftDeletedTerm().GetRawHash());
-
-
         // For each entry in the document frequency table.
         // (note that the entries are sorted in order of decreasing frequency).
         for (auto dfEntry : terms)
@@ -125,14 +119,6 @@ namespace BitFunnel
 
             m_termTable.CloseTerm(dfEntry.GetTerm().GetRawHash());
         }
-
-
-        //// Make an entry for the soft-deleted term.
-        //m_termTable.OpenTerm();
-        //m_rowAssigners[0]->Assign(1.0, 1, true);
-        //m_termTable.CloseTerm(m_termTable.GetSoftDeletedTerm().GetRawHash());
-
-        //// TODO: make entries for other soft-deleted terms.
 
         // TODO: make entries for facts.
 

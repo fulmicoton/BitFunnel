@@ -21,13 +21,11 @@
 // THE SOFTWARE.
 
 
-// #define HORRIBLE_HACK_DONT_CHECK_IN
-
 #include "BitFunnel/RowIdSequence.h"
 #include "DocumentHandleInternal.h"
 #include "DocTableDescriptor.h"
 #include "LoggerInterfaces/Logging.h"
-#include "Shard.h"                      // TODO: Remove this temporary include.
+#include "Shard.h"
 #include "Slice.h"
 
 
@@ -79,62 +77,12 @@ namespace BitFunnel
                                        value,
                                        m_index,
                                        m_slice->GetSliceBuffer());
-        //ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
-
-        //Term term(fact, 0u, 0u, 1u);
-        //RowIdSequence rows(term, termTable);
-        //auto it = rows.begin();
-
-        //if (it == rows.end())
-        //{
-        //    RecoverableError error("DocumentHandle::AssertFact: expected at least one row.");
-        //    throw error;
-        //}
-
-        //const RowId row = *it;
-
-        //++it;
-        //if (it != rows.end())
-        //{
-        //    RecoverableError error("DocumentHandle::AssertFact: expected no more than one row.");
-        //    throw error;
-
-        //}
-
-        //RowTableDescriptor const & rowTable =
-        //    m_slice->GetRowTable(row.GetRank());
-
-        //if (value)
-        //{
-        //    rowTable.SetBit(m_slice->GetSliceBuffer(),
-        //                    row.GetIndex(),
-        //                    m_index);
-        //}
-        //else
-        //{
-        //    rowTable.ClearBit(m_slice->GetSliceBuffer(),
-        //                      row.GetIndex(),
-        //                      m_index);
-        //}
     }
 
 
     void DocumentHandle::AddPosting(Term const & term)
     {
         m_slice->GetShard().AddPosting(term, m_index, m_slice->GetSliceBuffer());
-        //// TODO: Is this call in the right place?
-        //m_slice->GetShard().TemporaryAddPosting(term, m_index);
-
-        //ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
-        //RowIdSequence rows(term, termTable);
-
-        //for (auto const row : rows)
-        //{
-        //    m_slice->GetRowTable(row.GetRank()).
-        //        SetBit(m_slice->GetSliceBuffer(),
-        //               row.GetIndex(),
-        //               m_index);
-        //}
     }
 
 

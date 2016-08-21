@@ -52,19 +52,23 @@ namespace BitFunnel
         for (ShardId shard = 0; shard < shardCount; ++shard)
         {
             std::unique_ptr<ITermTable2> termTable(new TermTable());
-//            termTable->SetRowCounts(0, 0, 0);
+
+            // TermTable must be sealed before it can be used.
             termTable->Seal();
+
             m_termTables.push_back(std::move(termTable));
         }
     }
 
 
-    TermTableCollection::TermTableCollection(IFileManager & fileManager, ShardId shardCount)
+    TermTableCollection::TermTableCollection(IFileManager & fileManager,
+                                             ShardId shardCount)
     {
         for (ShardId shard = 0; shard < shardCount; ++shard)
         {
             auto input = fileManager.TermTable(0).OpenForRead();
-            m_termTables.emplace_back(std::unique_ptr<ITermTable2>(new TermTable(*input)));
+            m_termTables.emplace_back(
+                std::unique_ptr<ITermTable2>(new TermTable(*input)));
         }
     }
 

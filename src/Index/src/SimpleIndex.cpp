@@ -152,7 +152,8 @@ namespace BitFunnel
 
     ITermTable2 const & SimpleIndex::GetTermTable() const
     {
-        // TODO: Need a blockSize that works for all term tables.
+        // TODO: There is a different TermTable in each shard. Which should
+        // be returned? Currently returning the TermTable for shard 0.
         const ShardId tempId = 0;
         return m_termTables->GetTermTable(tempId);
     }

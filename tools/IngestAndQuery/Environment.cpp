@@ -20,8 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#include <iostream>
-
 #include "BitFunnel/Index/Factories.h"
 #include "BitFunnel/Index/IRecycler.h"
 #include "Commands.h"
@@ -44,8 +42,6 @@ namespace BitFunnel
     {
         RegisterCommands();
     }
-
-
 
 
     void Environment::RegisterCommands()
@@ -94,10 +90,6 @@ namespace BitFunnel
     void Environment::StartIndex()
     {
         m_index->StartIndex(false);
-
-        IRecycler & recycler = m_index->GetRecycler();
-        m_taskPool->TryEnqueue(
-            std::unique_ptr<RecyclerTask>(new RecyclerTask(recycler)));
     }
 
 

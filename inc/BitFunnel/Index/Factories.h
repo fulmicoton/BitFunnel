@@ -40,7 +40,6 @@ namespace BitFunnel
     class IShardDefinition;
     class ISimpleIndex;
     class ISliceBufferAllocator;
-//    class ITermTable;
     class ITermTable2;
     class ITermTableCollection;
     class ITermTableBuilder;
