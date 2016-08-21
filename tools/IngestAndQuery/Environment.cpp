@@ -93,7 +93,7 @@ namespace BitFunnel
 
     void Environment::StartIndex()
     {
-        m_index->StartIndex();
+        m_index->StartIndex(false);
 
         IRecycler & recycler = m_index->GetRecycler();
         m_taskPool->TryEnqueue(

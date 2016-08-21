@@ -22,14 +22,13 @@
 
 #pragma once
 
-#include <cstdint>                  // size_t parameter.
-
 #include "BitFunnel/IInterface.h"   // Base class.
 
 
 namespace BitFunnel
 {
     class IConfiguration;
+    class IFileManager;
     class IIngestor;
     class IRecycler;
     class ITermTable2;
@@ -49,13 +48,14 @@ namespace BitFunnel
     public:
         // Instantiates all of the classes necessary to form a BitFunnel Index.
         // Then starts the index.
-        virtual void StartIndex() = 0;
+        virtual void StartIndex(bool forStatistics) = 0;
 
         // Performs an orderly shutdown, then tears down all of the classes
         // created by StartIndex().
         virtual void StopIndex() = 0;
 
         virtual IConfiguration const & GetConfiguration() const = 0;
+        virtual IFileManager & GetFileManager() const = 0;
         virtual IIngestor & GetIngestor() const = 0;
         virtual IRecycler & GetRecycler() const = 0;
         virtual ITermTable2 const & GetTermTable() const = 0;

@@ -40,9 +40,11 @@ namespace BitFunnel
     class IShardDefinition;
     class ISimpleIndex;
     class ISliceBufferAllocator;
-    class ITermTable;
+//    class ITermTable;
     class ITermTable2;
+    class ITermTableCollection;
     class ITermTableBuilder;
+    class ITermTableCollection;
     class ITermTreatment;
 
     namespace Factories
@@ -51,14 +53,6 @@ namespace BitFunnel
             CreateConfiguration(size_t maxGramSize,
                                 bool keepTermText,
                                 IIndexedIdfTable const & idfTable);
-
-        std::unique_ptr<IIngestor>
-            CreateIngestor(IFileManager& filemanager,
-                           IDocumentDataSchema const & docDataSchema,
-                           IRecycler& recycler,
-                           ITermTable2 const & termTable,
-                           IShardDefinition const & shardDefinition,
-                           ISliceBufferAllocator& sliceBufferAllocator);
 
         std::unique_ptr<IDocumentDataSchema> CreateDocumentDataSchema();
 
@@ -71,6 +65,13 @@ namespace BitFunnel
         std::unique_ptr<IIndexedIdfTable>
             CreateIndexedIdfTable(std::istream& input,
                                   Term::IdfX10 defaultIdf);
+
+        std::unique_ptr<IIngestor>
+            CreateIngestor(IDocumentDataSchema const & docDataSchema,
+                           IRecycler& recycler,
+                           ITermTableCollection const & termTables,
+                           IShardDefinition const & shardDefinition,
+                           ISliceBufferAllocator& sliceBufferAllocator);
 
         std::unique_ptr<IRecycler> CreateRecycler();
 
@@ -91,6 +92,12 @@ namespace BitFunnel
                                    IDocumentFrequencyTable const & terms,
                                    IFactSet const & facts,
                                    ITermTable2 & termTable);
+
+        std::unique_ptr<ITermTableCollection>
+            CreateTermTableCollection(ShardId shardCount);
+        std::unique_ptr<ITermTableCollection>
+            CreateTermTableCollection(IFileManager & fileManager,
+                                      ShardId shardCount);
 
         std::unique_ptr<ITermTreatment> CreateTreatmentPrivateRank0();
 

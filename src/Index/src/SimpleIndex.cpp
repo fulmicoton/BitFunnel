@@ -25,6 +25,7 @@
 #include "BitFunnel/Configuration/Factories.h"
 #include "BitFunnel/Index/Factories.h"
 #include "BitFunnel/Index/Helpers.h"
+#include "BitFunnel/Index/IRecycler.h"
 #include "BitFunnel/Index/ISliceBufferAllocator.h"
 #include "BitFunnel/Row.h"
 #include "SimpleIndex.h"
@@ -49,12 +50,12 @@ namespace BitFunnel
         // What if TaskFactory calls back before SimpleIndex is fully initialized?
         : m_directory(directory),
           m_gramSize(static_cast<Term::GramSize>(gramSize)),
-          m_generateTermtoText(generateTermToText)
+          m_generateTermToText(generateTermToText)
     {
     }
 
 
-    void SimpleIndex::StartIndex()
+    void SimpleIndex::StartIndex(bool forStatistics)
     {
         char const * directory = m_directory.c_str();
         m_fileManager = Factories::CreateFileManager(directory,
@@ -64,12 +65,29 @@ namespace BitFunnel
         m_schema = Factories::CreateDocumentDataSchema();
 
         m_recycler = Factories::CreateRecycler();
+        m_recyclerThread = std::thread(RecyclerThreadEntryPoint, this);
 
 
-        // Load the TermTable
+        // TODO: Load shard definition from FileManager stream.
+        // TODO: Optimal shard.
+        m_shardDefinition = Factories::CreateShardDefinition();
+        // m_shardDefinition->AddShard(1000);
+        // m_shardDefinition->AddShard(2000);
+        // m_shardDefinition->AddShard(3000);
+
+        // Load the TermTables
         {
-            auto input = m_fileManager->TermTable(0).OpenForRead();
-            m_termTable = Factories::CreateTermTable(*input);
+            if (forStatistics)
+            {
+                m_termTables =
+                    Factories::CreateTermTableCollection(m_shardDefinition->GetShardCount());
+            }
+            else
+            {
+                m_termTables =
+                    Factories::CreateTermTableCollection(*m_fileManager,
+                                                         m_shardDefinition->GetShardCount());
+            }
         }
 
         // Load the IndexedIdfTable
@@ -80,26 +98,21 @@ namespace BitFunnel
         }
 
         m_configuration =
-            Factories::CreateConfiguration(m_gramSize, false, *m_idfTable);
+            Factories::CreateConfiguration(m_gramSize, m_generateTermToText, *m_idfTable);
 
-        const size_t blockSize = GetMinimumBlockSize(*m_schema, *m_termTable);
+        // TODO: Need a blockSize that works for all term tables.
+        const ShardId tempId = 0;
+        const size_t blockSize =
+            GetMinimumBlockSize(*m_schema, m_termTables->GetTermTable(tempId));
         std::cout << "Blocksize: " << blockSize << std::endl;
 
         const size_t initialBlockCount = 16;
         m_sliceAllocator = Factories::CreateSliceBufferAllocator(blockSize,
                                                                  initialBlockCount);
 
-        // TODO: Load shard definition from FileManager stream.
-        // TODO: Optimal shard.
-        m_shardDefinition = Factories::CreateShardDefinition();
-        // m_shardDefinition->AddShard(1000);
-        // m_shardDefinition->AddShard(2000);
-        // m_shardDefinition->AddShard(3000);
-
-        m_ingestor = Factories::CreateIngestor(*m_fileManager,
-                                               *m_schema,
+        m_ingestor = Factories::CreateIngestor(*m_schema,
                                                *m_recycler,
-                                               *m_termTable,
+                                               *m_termTables,
                                                *m_shardDefinition,
                                                *m_sliceAllocator);
     }
@@ -108,12 +121,20 @@ namespace BitFunnel
     void SimpleIndex::StopIndex()
     {
         m_recycler->Shutdown();
+        m_recyclerThread.join();
+        m_ingestor->Shutdown();
     }
 
 
     IConfiguration const & SimpleIndex::GetConfiguration() const
     {
         return *m_configuration;
+    }
+
+
+    IFileManager & SimpleIndex::GetFileManager() const
+    {
+        return *m_fileManager;
     }
 
 
@@ -131,6 +152,15 @@ namespace BitFunnel
 
     ITermTable2 const & SimpleIndex::GetTermTable() const
     {
-        return *m_termTable;
+        // TODO: Need a blockSize that works for all term tables.
+        const ShardId tempId = 0;
+        return m_termTables->GetTermTable(tempId);
+    }
+
+
+    void SimpleIndex::RecyclerThreadEntryPoint(void * data)
+    {
+        SimpleIndex* index = reinterpret_cast<SimpleIndex*>(data);
+        index->m_recycler->Run();
     }
 }

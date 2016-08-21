@@ -88,7 +88,7 @@ namespace BitFunnel
         auto index = Factories::CreateSimpleIndex(intermediateDirectory,
                                                   gramSize,
                                                   generateTermToText);
-        index->StartIndex();
+        index->StartIndex(true);
 
         //if (gramSize < 0 || gramSize > Term::c_maxGramSize)
         //{
@@ -195,7 +195,7 @@ namespace BitFunnel
             {
                 termToText = &configuration.GetTermToText();
             }
-            ingestor.WriteStatistics(termToText);
+            ingestor.WriteStatistics(index->GetFileManager(), termToText);
         }
 
         //ingestor->Shutdown();

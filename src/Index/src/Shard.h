@@ -65,8 +65,6 @@ namespace BitFunnel
     class Shard : private NonCopyable
     {
     public:
-        // typedef size_t Id;
-
         // Constructs an empty Shard with no slices. sliceBufferSize must be
         // sufficient to hold the minimum capacity Slice. The minimum capacity
         // is determined by a value returned by Row::DocumentsInRank0Row(1).
@@ -79,7 +77,10 @@ namespace BitFunnel
 
         virtual ~Shard();
 
-        void TemporaryAddPosting(Term const & term, DocIndex index);
+//        void TemporaryAddPosting(Term const & term, DocIndex index);
+        void AddPosting(Term const & term, DocIndex index, void* sliceBuffer);
+        void AssertFact(FactHandle fact, bool value, DocIndex index, void* sliceBuffer);
+
         void TemporaryRecordDocument();
         void TemporaryWriteDocumentFrequencyTable(std::ostream& out,
                                                   TermToText const * termToText) const;

@@ -75,61 +75,66 @@ namespace BitFunnel
 
     void DocumentHandle::AssertFact(FactHandle fact, bool value)
     {
-        ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
+        m_slice->GetShard().AssertFact(fact,
+                                       value,
+                                       m_index,
+                                       m_slice->GetSliceBuffer());
+        //ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
 
-        Term term(fact, 0u, 0u, 1u);
-        RowIdSequence rows(term, termTable);
-        auto it = rows.begin();
+        //Term term(fact, 0u, 0u, 1u);
+        //RowIdSequence rows(term, termTable);
+        //auto it = rows.begin();
 
-        if (it == rows.end())
-        {
-            RecoverableError error("DocumentHandle::AssertFact: expected at least one row.");
-            throw error;
-        }
+        //if (it == rows.end())
+        //{
+        //    RecoverableError error("DocumentHandle::AssertFact: expected at least one row.");
+        //    throw error;
+        //}
 
-        const RowId row = *it;
+        //const RowId row = *it;
 
-        ++it;
-        if (it != rows.end())
-        {
-            RecoverableError error("DocumentHandle::AssertFact: expected no more than one row.");
-            throw error;
+        //++it;
+        //if (it != rows.end())
+        //{
+        //    RecoverableError error("DocumentHandle::AssertFact: expected no more than one row.");
+        //    throw error;
 
-        }
+        //}
 
-        RowTableDescriptor const & rowTable =
-            m_slice->GetRowTable(row.GetRank());
+        //RowTableDescriptor const & rowTable =
+        //    m_slice->GetRowTable(row.GetRank());
 
-        if (value)
-        {
-            rowTable.SetBit(m_slice->GetSliceBuffer(),
-                            row.GetIndex(),
-                            m_index);
-        }
-        else
-        {
-            rowTable.ClearBit(m_slice->GetSliceBuffer(),
-                              row.GetIndex(),
-                              m_index);
-        }
+        //if (value)
+        //{
+        //    rowTable.SetBit(m_slice->GetSliceBuffer(),
+        //                    row.GetIndex(),
+        //                    m_index);
+        //}
+        //else
+        //{
+        //    rowTable.ClearBit(m_slice->GetSliceBuffer(),
+        //                      row.GetIndex(),
+        //                      m_index);
+        //}
     }
 
 
     void DocumentHandle::AddPosting(Term const & term)
     {
-        // TODO: Is this call in the right place?
-        m_slice->GetShard().TemporaryAddPosting(term, m_index);
+        m_slice->GetShard().AddPosting(term, m_index, m_slice->GetSliceBuffer());
+        //// TODO: Is this call in the right place?
+        //m_slice->GetShard().TemporaryAddPosting(term, m_index);
 
-        ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
-        RowIdSequence rows(term, termTable);
+        //ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
+        //RowIdSequence rows(term, termTable);
 
-        for (auto const row : rows)
-        {
-            m_slice->GetRowTable(row.GetRank()).
-                SetBit(m_slice->GetSliceBuffer(),
-                       row.GetIndex(),
-                       m_index);
-        }
+        //for (auto const row : rows)
+        //{
+        //    m_slice->GetRowTable(row.GetRank()).
+        //        SetBit(m_slice->GetSliceBuffer(),
+        //               row.GetIndex(),
+        //               m_index);
+        //}
     }
 
 

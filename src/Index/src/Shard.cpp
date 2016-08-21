@@ -25,7 +25,6 @@
 #include "BitFunnel/Index/IIngestor.h"
 #include "BitFunnel/Index/IRecycler.h"
 #include "BitFunnel/Index/ISliceBufferAllocator.h"
-//#include "BitFunnel/ITermTable.h"
 #include "BitFunnel/ITermTable2.h"
 #include "BitFunnel/Row.h"
 #include "BitFunnel/RowIdSequence.h"
@@ -399,14 +398,78 @@ namespace BitFunnel
     }
 
 
-    void Shard::TemporaryAddPosting(Term const & term, DocIndex /*index*/)
+    //void Shard::TemporaryAddPosting(Term const & term, DocIndex /*index*/)
+    //{
+    //    {
+    //        // TODO: Remove this lock once it is incorporated into the frequency
+    //        // table class.
+    //        std::lock_guard<std::mutex> lock(m_temporaryFrequencyTableMutex);
+    //        // m_temporaryFrequencyTable[term]++;
+    //        m_docFrequencyTableBuilder->OnTerm(term);
+    //    }
+    //}
+
+
+    void Shard::AddPosting(Term const & term,
+                           DocIndex index, 
+                           void* sliceBuffer)
     {
+        if (m_docFrequencyTableBuilder.get() != nullptr)
         {
-            // TODO: Remove this lock once it is incorporated into the frequency
-            // table class.
             std::lock_guard<std::mutex> lock(m_temporaryFrequencyTableMutex);
-            // m_temporaryFrequencyTable[term]++;
             m_docFrequencyTableBuilder->OnTerm(term);
+        }
+
+
+        RowIdSequence rows(term, m_termTable);
+
+        for (auto const row : rows)
+        {
+            m_rowTables[row.GetRank()].SetBit(sliceBuffer,
+                                              row.GetIndex(),
+                                              index);
+        }
+    }
+
+
+    void Shard::AssertFact(FactHandle fact, bool value, DocIndex index, void* sliceBuffer)
+    {
+//        ITermTable2 const & termTable = m_slice->GetShard().GetTermTable();
+
+        Term term(fact, 0u, 0u, 1u);
+        RowIdSequence rows(term, m_termTable);
+        auto it = rows.begin();
+
+        if (it == rows.end())
+        {
+            RecoverableError error("Shard::AssertFact: expected at least one row.");
+            throw error;
+        }
+
+        const RowId row = *it;
+
+        ++it;
+        if (it != rows.end())
+        {
+            RecoverableError error("Shard::AssertFact: expected no more than one row.");
+            throw error;
+
+        }
+
+        RowTableDescriptor const & rowTable =
+            m_rowTables[row.GetRank()];
+
+        if (value)
+        {
+            rowTable.SetBit(sliceBuffer,
+                            row.GetIndex(),
+                            index);
+        }
+        else
+        {
+            rowTable.ClearBit(sliceBuffer,
+                              row.GetIndex(),
+                              index);
         }
     }
 

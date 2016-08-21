@@ -32,6 +32,7 @@
 namespace BitFunnel
 {
     class IDocument;
+    class IFileManager;
     class IRecycler;
     class ITokenManager;
     class Shard;
@@ -74,7 +75,8 @@ namespace BitFunnel
         //      CumulativeTermCountd
         //      DocumentFrequencyTable (with term text if termToText provided)
         //      IndexedIdfTable
-        virtual void WriteStatistics(TermToText const * termToText) const = 0;
+        virtual void WriteStatistics(IFileManager & fileManager,
+                                     TermToText const * termToText) const = 0;
 
         // Adds a document to the index. Throws if there is no space to add the
         // document which means the system is running at its maximum capacity.
