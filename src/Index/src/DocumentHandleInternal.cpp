@@ -111,6 +111,19 @@ namespace BitFunnel
     }
 
 
+    bool DocumentHandle::GetBit(RowId row) const
+    {
+        auto bit = 
+            m_slice->GetShard().GetRowTable(
+                row.GetRank()).GetBit(
+                    m_slice->GetSliceBuffer(),
+                    row.GetIndex(),
+                    m_index);
+
+        return bit == 1ull;
+    }
+
+
     //*************************************************************************
     //
     // DocumentHandleInternal

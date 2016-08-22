@@ -295,6 +295,21 @@ namespace BitFunnel
     }
 
 
+    DocumentHandle Ingestor::GetHandle(DocId id) const
+    {
+        bool isFound;
+        auto handle = m_documentMap->Find(id, isFound);
+
+        if (!isFound)
+        {
+            RecoverableError error("Ingestor::GetHandle(): DocId not found.");
+            throw error;
+        }
+
+        return handle;
+    }
+
+
     size_t Ingestor::GetUsedCapacityInBytes() const
     {
         throw NotImplemented();

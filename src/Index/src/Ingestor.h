@@ -105,6 +105,8 @@ namespace BitFunnel
         // partially ingested, and DocIds that have been deleted.
         virtual bool Contains(DocId id) const override;
 
+        virtual DocumentHandle GetHandle(DocId id) const override;
+
         // Returns the size in bytes of the capacity of row tables in the
         // entire ingestion index.
         virtual size_t GetUsedCapacityInBytes() const override;

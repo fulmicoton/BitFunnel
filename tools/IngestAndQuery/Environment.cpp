@@ -105,6 +105,12 @@ namespace BitFunnel
     }
 
 
+    IIngestor & Environment::GetIngestor() const
+    {
+        return m_index->GetIngestor();
+    }
+
+
     ITermTable2 const & Environment::GetTermTable() const
     {
         return m_index->GetTermTable();
